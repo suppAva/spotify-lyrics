@@ -3,8 +3,12 @@
 
 # Local Arch packaging output
 /packaging/arch/dist/
+/packaging/arch/pkg/
+/packaging/arch/src/
+/packaging/arch/lyricsync-*.tar.gz
 /packaging/pkg/
 /packaging/src/
+*.pkg.tar
 *.pkg.tar.*
 
 # Local credentials and environment

@@ -4,17 +4,29 @@ LyricSync 3 is a native Linux terminal viewer for Spotify-synchronized lyrics. O
 
 ## Install on Arch Linux
 
-LyricSync requires Linux and Rust 1.88 or later. To build from a checkout on Arch, install the system dependencies:
+### From the AUR
+
+Once the stable `lyricsync` package is published on the AUR, install it with:
 
 ```sh
-sudo pacman -S --needed rust cairo pango libfyaml libunistring playerctl curl coreutils
+yay -S lyricsync
+```
+
+For a local package before publication, build from your checkout using [the local Arch packaging instructions](#local-arch-package).
+
+### From source
+
+LyricSync requires Linux and Rust 1.88 or later. On Arch, install the system dependencies:
+
+```sh
+sudo pacman -S --needed base-devel rust cairo pango glib2 libfyaml libunistring playerctl curl coreutils
 ```
 
 On other Linux distributions, install the equivalent packages, including development libraries for Cairo, Pango, GLib, libfyaml, and libunistring. Cargo can build LyricSync without downloading Rust crates. It does not install system packages.
 
 ```sh
-cargo build --release --locked
-cargo install --locked --path .
+cargo build --release --locked --offline
+cargo install --locked --offline --path .
 ```
 
 Ensure `${CARGO_HOME:-$HOME/.cargo}/bin` is on your PATH. If needed, add it to your shell startup file and open a new terminal:
@@ -155,13 +167,13 @@ Use original lyrics in fixtures. Include a targeted regression test for parser, 
 
 ### Local Arch package
 
-Run `packaging/arch/build-local.sh` as your regular user with Arch's `base-devel` group and the dependencies listed above installed. The helper snapshots the current source, computes the archive checksum for makepkg, and writes the package under `packaging/arch/dist/`.
+Run the helper as your regular user after installing the Arch build dependencies above. It packages a snapshot of the checkout, verifies that snapshot's checksum, and writes the resulting package to `packaging/arch/dist/` by default.
 
 ```sh
 packaging/arch/build-local.sh
 sudo pacman -U packaging/arch/dist/lyricsync-3.0.0-1-x86_64.pkg.tar.zst
 ```
 
-The package installs `/usr/bin/lyricsync` along with its MIT license, README, and demo. Verify with `pacman -Qi lyricsync` and remove with `sudo pacman -Rns lyricsync`. This workflow builds a local package from the checkout. [Arch packaging guide](https://wiki.archlinux.org/title/Creating_packages)
+The package installs `/usr/bin/lyricsync`, the MIT license, documentation, and the demo. Check an installed package with `pacman -Qi lyricsync`. Spotify runs separately in the same desktop session. LRCLIB is needed for online lookups. The offline mode uses local files and the cache.
 
-For future AUR publication, replace the local archive source with the public release tarball URL, record the published archive's checksum in [the PKGBUILD](packaging/arch/PKGBUILD), add the real upstream URL, and regenerate `.SRCINFO` with `makepkg --printsrcinfo`. Use a new package release number for changed builds distributed under the same version.
+See the [changelog](CHANGELOG.md) for release notes and the [Arch release instructions](https://github.com/suppAva/spotify-lyrics/blob/main/packaging/arch/README.md) for verifying the tagged archive and preparing the AUR submission.

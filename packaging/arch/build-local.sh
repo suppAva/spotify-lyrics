@@ -3,7 +3,10 @@ set -euo pipefail
 
 recipe_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 project_dir=$(cd -- "$recipe_dir/../.." && pwd)
-output_dir="$recipe_dir/dist"
+output_dir=${PKGDEST:-"$recipe_dir/dist"}
+mkdir -p -- "$output_dir"
+output_dir=$(cd -- "$output_dir" && pwd)
+
 stage=$(mktemp -d)
 trap 'rm -rf -- "$stage"' EXIT
 
@@ -13,18 +16,18 @@ if [[ -z "$version" || "$version" != "$recipe_version" ]]; then
     printf 'Cargo.toml and PKGBUILD must have the same release version.\n' >&2
     exit 1
 fi
-archive="$stage/lyricsync-$version.tar.zst"
 
-# Snapshot only the source and distribution files. The local working tree may
-# contain changes, so verify the exact archive used in this invocation.
+archive="lyricsync-$version.tar.gz"
+# Mirror the release archive's root directory and keep the upstream recipe intact.
 tar -C "$project_dir" --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner \
-    --transform="s,^,lyricsync-$version/," \
-    -cf - Cargo.toml Cargo.lock LICENSE README.md src tests examples |
-    zstd --quiet -T1 -o "$archive"
-read -r checksum _ < <(sha256sum -- "$archive")
-sed -E "s/^sha256sums=\('[[:xdigit:]]{64}'\)$/sha256sums=('$checksum')/" \
+    --transform="s,^,spotify-lyrics-$version/," \
+    -cf - Cargo.toml Cargo.lock LICENSE README.md CHANGELOG.md src tests examples |
+    gzip -n > "$stage/$archive"
+read -r checksum _ < <(sha256sum -- "$stage/$archive")
+sed -E \
+    -e "s|^source=\(.*\)$|source=(\"$archive\")|" \
+    -e "s|^sha256sums=\(.*\)$|sha256sums=('$checksum')|" \
     "$recipe_dir/PKGBUILD" > "$stage/PKGBUILD"
 
-mkdir -p -- "$output_dir"
 cd -- "$stage"
-PKGDEST="$output_dir" SRCDEST="$stage" BUILDDIR="$stage" makepkg --force
+PKGDEST="$output_dir" SRCDEST="$stage" BUILDDIR="$stage" makepkg "$@"

@@ -1,0 +1,23 @@
+pkgbase = lyricsync
+	pkgdesc = Spotify-synchronized lyrics for Linux terminals
+	pkgver = 3.0.0
+	pkgrel = 1
+	url = https://github.com/suppAva/spotify-lyrics
+	arch = x86_64
+	license = MIT
+	makedepends = rust
+	depends = cairo
+	depends = coreutils
+	depends = curl
+	depends = glib2
+	depends = glibc
+	depends = libfyaml
+	depends = libgcc
+	depends = libunistring
+	depends = pango
+	depends = playerctl
+	options = !debug
+	source = lyricsync-3.0.0.tar.gz::https://github.com/suppAva/spotify-lyrics/archive/refs/tags/v3.0.0.tar.gz
+	sha256sums = UNVERIFIED
+
+pkgname = lyricsync

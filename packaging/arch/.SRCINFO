@@ -18,6 +18,6 @@ pkgbase = lyricsync
 	depends = playerctl
 	options = !debug
 	source = lyricsync-3.0.0.tar.gz::https://github.com/suppAva/spotify-lyrics/archive/refs/tags/v3.0.0.tar.gz
-	sha256sums = UNVERIFIED
+	sha256sums = 39a9a5e5105e420108e3b002766bf6ba6572d35256f1f8ad5f902dac77fd64bd
 
 pkgname = lyricsync

@@ -12,8 +12,7 @@ options=('!debug')
 _archive="$pkgname-$pkgver.tar.gz"
 _srcdir="spotify-lyrics-$pkgver"
 source=("$_archive::$url/archive/refs/tags/v$pkgver.tar.gz")
-# Replace with the SHA-256 of the published tag archive before submitting to the AUR.
-sha256sums=('UNVERIFIED')
+sha256sums=('39a9a5e5105e420108e3b002766bf6ba6572d35256f1f8ad5f902dac77fd64bd')
 
 build() {
     cd "$srcdir/$_srcdir"
